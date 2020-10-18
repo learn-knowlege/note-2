@@ -50,6 +50,62 @@
 
 > 漏桶算法能强行限制数据的传输速率。
 
+```cgo
+type Bucket struct {
+	// 容量
+	capacity uint64
+	// 水位
+	water uint64
+	// 纳秒
+	reset uint64
+	// 每1秒10滴  如果想做更细粒度的时间可以把单位换成毫秒
+	rate uint64
+}
+
+func (b *Bucket) Acquire() bool {
+	// 流出
+	left := ((unixNano() - b.reset) / uint64(time.Second)) * b.rate
+	if left > b.water {
+		b.water = 0
+	} else {
+		b.water -= left
+	}
+	b.reset = unixNano()
+	if b.water < b.capacity {
+		b.water++
+		return true
+	} else {
+		return false
+	}
+}
+
+func NewBucket(capacity uint64, rate uint64) *Bucket {
+	return &Bucket{
+		capacity: capacity,
+		water:    0,
+		reset:    unixNano(),
+		rate:     rate,
+	}
+}
+
+// unixNano 当前时间（纳秒） 1秒=1000000000纳秒
+func unixNano() uint64 {
+	return uint64(time.Now().UnixNano())
+}
+
+
+func main() {
+	bucket := NewBucket(100, 10)
+	for i := 0; i < 102; i++ {
+		fmt.Println(bucket.Acquire())
+	}
+	time.Sleep(time.Second)
+	for i := 0; i < 12; i++ {
+		fmt.Println(bucket.Acquire())
+	}
+}
+```
+
 ### 令牌桶
 
 > 令牌桶算法用来控制发送到网络上的数据的数目，并允许突发数据的发送。
@@ -59,6 +115,71 @@
 > 当桶里没有令牌可取时，则拒绝服务。从原理上看，令牌桶算法和漏桶算法是相反的，一个“进水”，一个是“漏水”。
 
 <img src="image/limit.jpg" width=400>
+
+```cgo
+type RateLimiter struct {
+	rate      uint64
+	allowance uint64
+	max       uint64
+	unit      uint64
+	lastCheck uint64
+}
+
+// Limit 判断是否超过限制
+func (rl *RateLimiter) Limit() bool {
+	//fmt.Println("limit")
+	now := unixNano()
+	// 计算上一次调用到现在过了多少纳秒
+	passed := now - atomic.SwapUint64(&rl.lastCheck, now)
+	rate := atomic.LoadUint64(&rl.rate)
+	current := atomic.AddUint64(&rl.allowance, passed*rate)
+	if max := atomic.LoadUint64(&rl.max); current > max {
+		atomic.AddUint64(&rl.allowance, max-current)
+		current = max
+	}
+	if current < rl.unit {
+		return true
+	}
+	// 没有超过限额
+	atomic.AddUint64(&rl.allowance, -rl.unit)
+	return false
+}
+
+// New 创建RateLimiter实例
+func NewRateLimiter(rate int, per time.Duration) *RateLimiter {
+	// 纳秒   time.Second = 1000000000
+	nano := uint64(per)
+	if nano < 1 {
+		nano = uint64(time.Second)
+	}
+	if rate < 1 {
+		rate = 1
+	}
+	return &RateLimiter{
+		rate:      uint64(rate),
+		allowance: uint64(rate) * nano,
+		max:       uint64(rate) * nano,
+		unit:      nano,
+		lastCheck: unixNano(),
+	}
+}
+
+// unixNano 当前时间（纳秒） 1秒=1000000000纳秒
+func unixNano() uint64 {
+	return uint64(time.Now().UnixNano())
+}
+
+func main() {
+	rateLimiter := NewRateLimiter(10, time.Second)
+	for i := 0; i < 102; i++ {
+		fmt.Println(i,rateLimiter.Limit())
+	}
+	time.Sleep(time.Second)
+	for i := 0; i < 12; i++ {
+		fmt.Println(i,rateLimiter.Limit())
+	}
+}
+```
 
 ### 总结
 
