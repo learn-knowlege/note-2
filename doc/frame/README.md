@@ -1,20 +1,20 @@
 # 以太网帧
 
-### 以太网帧结构
+### 帧结构
 
-<img src="image/IEEE802-3.png" width=1000>
+<img src="image/IEEE802-3.png" width=800>
 
 在以太网链路上的数据包称作以太帧。以太帧起始部分由前导码和帧开始符组成。后面紧跟着一个以太网报头，
 以MAC地址说明目的地址和源地址。帧的中部是该帧负载的*包含其他协议报头的数据包(例如IP协议)*。以太帧由一个32位冗余校验码结尾。
 它用于检验数据传输是否出现损坏。
 
-<img src="image/frame1.png" width=500>
+<img src="image/frame1.png" width=600>
 
 以太网上使用两种标准帧格式。第一种是上世纪80年代提出的DIX v2格式，即Ethernet II格式。第二种是1983年提出的IEEE 802.3格式。
 两种格式得区别在于在目标和源MAC地址后面，Ethernet II 格式中是一个Type字段，标识以太网帧处理完之后将被发送到哪个上层协议进行处理，
 IEEE 802.3格式同样位置是Length字段，标示data数据包的大小。
 
-<img src="image/frame2.jpg" width=500>
+<img src="image/frame2.jpg" width=600>
 
 当Type字段值小于等于1500（0x05DC）时，帧使用的是IEEE 802.3格式。当Type字段值大于等于1536（0x0600）时，帧使用的是Ethernet II格式。
 
