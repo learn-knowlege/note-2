@@ -55,14 +55,14 @@ IEEE 802.3格式同样位置是Length字段，标示data数据包的大小。
   
 抓包
 
-<img src="image/pcap.jpg" width=600>
+<img src="image/pcap.jpg" width=700>
 
 ### 帧封装
 
 当我们应用程序用TCP传输数据的时候，数据被送入协议栈中，然后逐个通过每一层，知道最后到物理层数据转换成比特流，
 送入网络。而再这个过程中，每一层都会对要发送的数据加一些首部信息。
 
-<img src="image/frame3.png" width=600>
+<img src="image/frame3.png" width=700>
 
 如图可以看出，每一层数据是由上一层数据+本层首部信息组成的。
 
