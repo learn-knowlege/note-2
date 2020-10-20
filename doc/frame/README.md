@@ -55,7 +55,7 @@ IEEE 802.3格式同样位置是Length字段，标示data数据包的大小。
   
 抓包
 
-<img src="image/pcap.jpg" width=700>
+<img src="image/pcap.png" width=700>
 
 ### 帧封装
 
@@ -84,4 +84,5 @@ IEEE 802.3格式同样位置是Length字段，标示data数据包的大小。
 
 最后,帧被转换为比特,通过网络介质传输。 这种协议栈逐层向下传递数据,并添加报头和报尾的过程称为封装。
 
+*相关*
 https://www.cnblogs.com/happy1983/p/9269069.html
