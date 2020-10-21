@@ -110,12 +110,12 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 
 **TCP 三次握手**
 
-<img src="image/handshake.png" width=700>
+<img src="image/handshake.png" width=600>
 
 
 **TCP 四次挥手**
 
-<img src="image/bye.png" width=700>
+<img src="image/bye.png" width=600>
 
 
 ### UDP协议
@@ -124,7 +124,7 @@ UDP 不提供复杂的控制机制，利用 IP 提供面向「无连接」的通
 
 UDP 协议真的非常简，头部只有 8 个字节（ 64 位）。
 
-<img src="image/udp-header.jpg" width=700>
+<img src="image/udp-header.jpg" width=500>
 
 **目标和源端口**
 
@@ -141,7 +141,7 @@ UDP 协议真的非常简，头部只有 8 个字节（ 64 位）。
 如果接收方UDP发现收到的报文中的目的端口号不正确（不存在对应端口号的应用进程0,），就丢弃该报文，并由ICMP发送“端口不可达”差错报文给对方。
 
 
-### TCP vs UDP
+### TCP 与 UDP 区别
 
 **连接**
 
