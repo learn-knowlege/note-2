@@ -113,6 +113,8 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 
 ### TCP 三次握手
 
+**图示**
+
 <img src="image/handshake.png" width=600>
 
 **为什么是三次握手？不是两次、四次？**
@@ -123,7 +125,7 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 > 那么此时服务端就会回一个 SYN + ACK 报文给客户端；
 > 那么客户端就会发送 RST 报文给服务端，表示中止这一次连接。如果是两次握手，就无法发RST报文，造成建立历史连接。
 
-<img src="image/handshake1.jpg" width=700>
+<img src="image/handshake1.jpg" width=450>
 
 > 2、同步双方初始序列号。
 >
@@ -135,7 +137,7 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 >
 > 如果客户端的 SYN 阻塞了，重复发送多次 SYN 报文，那么服务器在收到请求后就会建立多个冗余的无效链接，造成不必要的资源浪费。
 
-<img src="image/handshake2.jpg" width=700>
+<img src="image/handshake2.jpg" width=400>
 
 > 总结
 >
@@ -145,7 +147,10 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 
 
 
-**TCP 四次挥手**
+### TCP 四次挥手
+
+**图示**
+
 <img src="image/bye.png" width=600>
 
 
@@ -256,16 +261,10 @@ IP协议输入网络层，甭管是TCP、UDP还是ICMP都是在IP协议头后面
 
 ### MTU 与 MSS
 
-<img src="image/mtu-mss.jpg" width=650>
+MTU：一个网络包的最大长度，以太网中一般为 1500 字节
+MSS：除去 IP 和 TCP 头部之后，一个网络包所能容纳的 TCP 数据的最大长度；
 
-**MTU**
-
-> 一个网络包的最大长度，以太网中一般为 1500 字节；
-
-**MSS**
-
-> 除去 IP 和 TCP 头部之后，一个网络包所能容纳的 TCP 数据的最大长度；
-
+<img src="image/mtu-mss.jpg" width=500>
 
 **如果TCP 的整个报文（头部 + 数据）交给 IP 层进行分片，会有什么异常呢？**
 
@@ -280,7 +279,7 @@ IP协议输入网络层，甭管是TCP、UDP还是ICMP都是在IP协议头后面
 > 所以，为了达到最佳的传输效能 TCP 协议在建立连接的时候通常要协商双方的 MSS 值，当 TCP 层发现数据超过 MSS 时，则就先会进行分片，当然由它形成的 IP 包的长度也就不会大于 MTU ，自然也就不用 IP 分片了。
 > 
 
-<img src="image/mss.jpg" width=650>
+<img src="image/mss.jpg" width=500>
 
 > 经过 TCP 层分片后，如果一个 TCP 分片丢失后，进行重发时也是以 MSS 为单位，而不用重传所有的分片，大大增加了重传的效率。
 
