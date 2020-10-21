@@ -113,7 +113,7 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 
 ### TCP 三次握手
 
-**图示**
+TCP 连接通过三次进行握手
 
 <img src="image/handshake.png" width=600>
 
@@ -149,7 +149,7 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 
 ### TCP 四次挥手
 
-**图示**
+TCP 需要通过四次进行连接断开
 
 <img src="image/bye.png" width=600>
 
@@ -173,7 +173,7 @@ TCP是一种面向连接（连接导向）的、可靠的基于字节流的传�
 
 **为什么需要 TIME_WAIT 状态？**
 
-<img src="image/tw.jpg" width=400>
+<img src="image/tw.jpg" width=500>
 
 > 1、防止旧连接的数据包
 >
@@ -315,5 +315,8 @@ MSS：除去 IP 和 TCP 头部之后，一个网络包所能容纳的 TCP 数据
 > 经过 TCP 层分片后，如果一个 TCP 分片丢失后，进行重发时也是以 MSS 为单位，而不用重传所有的分片，大大增加了重传的效率。
 
 
+
+
+https://mp.weixin.qq.com/s/FnCGyzJr9QoKNLI4YalJEw
 
 
