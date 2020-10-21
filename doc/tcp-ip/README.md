@@ -2,7 +2,7 @@
 
 TCP/IP（TCP/IP Protocol Suite）是一个协议族，包含两个核心协议：TCP（传输控制协议）和IP（网际协议），类似计算机科学中的堆栈，因此又被称为TCP/IP协议栈。
 
-<img src="image/tcp-ip-protocal.png" width=700>
+<img src="image/tcp-ip-protocal.png" width=800>
 
 OSI(Open System Interconnection Reference Model)七层模型，一种概念模型，由国际标准化组织提出，一个试图使各种计算机在世界范围内互连为网络的标准框架。
 
@@ -177,7 +177,7 @@ UDP 协议真的非常简，头部只有 8 个字节（ 64 位）。
 IP协议输入网络层，甭管是TCP、UDP还是ICMP都是在IP协议头后面的数据部分。IPv4的头部结构长度为20字节，
 若含有可变长的选项部分，最多60字节。
 
-<img src="image/ip-header.png" width=500>
+<img src="image/ip-header.png" width=650>
 
 **版本**
 
