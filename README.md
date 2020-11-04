@@ -12,3 +12,5 @@
 #### [垃圾回收](doc/garbagecollection)
 
 #### [Docker](doc/docker)
+
+#### [高性能 Kafka](doc/kafka)
