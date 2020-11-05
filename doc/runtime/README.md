@@ -25,4 +25,4 @@ Go 对系统调用的指令进行了封装，可不依赖glibc。一些关键字
 
 **发展历程**
 
-<img src="image/runtime-3.png" width=500>
+<img src="image/runtime-3.png" width=1000>
