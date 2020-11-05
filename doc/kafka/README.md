@@ -25,7 +25,7 @@ consumer 从 broker 读取数据时，因为自带了偏移量，接着上次读
 
 顺序读写，是kafka利用磁盘特性的一个重要体现。
 
-<img src="image/write-1.jpg" width=500>
+<img src="image/write-1.jpg" width=400>
 
 这种方法有一个缺陷——没有办法删除数据 ，所以kafka是不会删除数据的,它会把所有的数据都保留下来。
 
@@ -40,7 +40,7 @@ consumer 从 broker 读取数据时，因为自带了偏移量，接着上次读
 零拷贝技术指在计算机执行操作时，CPU 不需要先将数据从一个内存区域复制到另一个内存区域，从而可以减少上下文切换以及 CPU 的拷贝时间。
 它的作用是在数据报从网络设备到用户程序空间传递的过程中，减少数据拷贝次数，减少系统调用，实现 CPU 的零参与，彻底消除 CPU 在这方面的负载。
 
-### mmap
+### 1、mmap
 
 kafka 会把收到的消息都写入到硬盘中。为了优化写入速度，除了上面的`顺序读写`外，还用到了 `mmap` 。
 
@@ -75,7 +75,7 @@ mmap(Memory Mapped Files) 简称内存映射文件，工作原理是直接利用
 kafka 提供了一个参数 producer.type 来控制是不是主动 flush 。如果 kafka 写入到 mmap 之后就立即 flush 然后再返回 producer 叫同步 (sync)；
 写入 mmap 之后立即返回 producer 不调用 flush 叫异步 (async)。
 
-### sendfile
+### 2、sendfile
 
 kafka 会把收到的消息通过网络发送，传统方式先读取磁盘、再用 socket 发送，实际也是进过四次 copy。
 
