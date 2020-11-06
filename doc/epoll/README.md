@@ -97,7 +97,7 @@ int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout)
 当 timeout 为 0 时，epoll_wait 永远会立即返回。而 timeout 为 -1 时，epoll_wait 会一直阻塞直到任一已注册的事件变为就绪。当 timeout 为一正整数时，epoll 会阻塞直到计时 timeout 毫秒终了或已注册的事件变为就绪。因为内核调度延迟，阻塞的时间可能会略微超过 timeout 毫秒。
 
 
-**实现**
+**实例代码**
 
 ```
 #define MAX_EVENTS 10
@@ -150,21 +150,84 @@ for (;;) {
 }
 ```
 
-红黑树、就绪链表
+**原理详解**
 
-mmap
+epoll 中最重要的两个数据结构是红黑树和就绪链表，红黑树用于管理所有的文件描述符 fd，就绪链表用于保存有事件发生的文件描述符。
+
+```
+struct epitem 
+{
+    struct rb_node  rbn;        // 用于主结构管理的红黑树
+    struct list_head  rdllink;  // 事件就绪链表
+    struct epitem  *next;       // 用于主结构体中的链表
+ 	struct epoll_filefd  ffd;   // 这个结构体对应的被监听的文件描述符信息
+ 	int  nwait;                 // poll操作中事件的个数
+    struct list_head  pwqlist;  // 双向链表，保存着被监视文件的等待队列
+    struct eventpoll  *ep;      // 该项属于哪个主结构体（多个epitm从属于一个eventpoll）
+    struct list_head  fllink;   // 双向链表，用来链接被监视的文件描述符对应的struct
+    struct epoll_event  event;  // 注册的感兴趣的事件，也就是用户空间的epoll_event
+}
+
+struct eventpoll
+{
+    spin_lock_t       lock;         // 对本数据结构的访问
+    struct mutex      mtx;          // 防止使用时被删除
+    /*
+     * 等待队列可以看作保存进程的容器，在阻塞进程时，将进程放入等待队列；
+     * 当唤醒进程时，从等待队列中取出进程
+     */ 
+    wait_queue_head_t   wq;         // sys_epoll_wait() 使用的等待队列
+    wait_queue_head_t   poll_wait;  // file->poll()使用的等待队列
+    struct list_head    rdllist;    // 就绪链表
+    struct rb_root      rbr;        // 用于管理所有fd的红黑树（树根）
+    struct epitem      *ovflist;    // 将事件到达的fd进行链接起来发送至用户空间
+}
+```
+
+当进程调用 epoll_create 方法时，Linux内核会创建一个 eventpoll 结构体，在内核cache里建了个红黑树用于存储函数 epoll_ctl 注册的 socket，
+还好建立 rdllist 双向就绪链表，用于存储准备就绪的事件。
+
+每当向系统中添加一个 fd 时，就创建一个 epitem 结构体。
+
+<img src="image/rbr.jpg" width=500>
+
+调用函数 epoll_wait 时，仅仅观察就绪链表 rdllist 中有无数据即可。有数据或者 timeout 超时，便会返回。
+
+所有添加到 epoll 中的事件都会与设备(如网卡)驱动程序建立回调关系，相应事件的发生时会调用这里的回调方法，ep_poll_callback函数主要的功能
+是当被监视文件的等待事件就绪时，将文件描述符对应的 epitem 实例添加到就绪链表中，触发 epoll_wait 函数不再阻塞。内核会将就绪链表中的事件从内核空间拷贝到用户空间(使用共享内存提高效率）。
+
+epoll_ctl 在向 epoll 对象中添加、修改、删除事件时，从 rbr 红黑树中查找事件也非常快，也就是说epoll是非常高效的，它可以轻易地处理百万级别的并发连接。
+
+<img src="image/epoll-1.jpg" width=500>
 
 
+**总结**
 
-**Q:水平触发与边缘触发区别？**
+一颗红黑树，一张准备就绪句柄链表，少量的内核cache，就帮我们解决了大并发下的socket处理问题。
 
-> libevent 采用水平触发， nginx 采用边沿触发
->
->
-> 直观感受，缓存区有数据，只通知一次；水平触发，缓存区数据没有取完，会一直触发。
+执行epoll_create()时，创建了红黑树和就绪链表；
+
+执行epoll_ctl()时，如果增加socket句柄，则检查在红黑树中是否存在，存在立即返回，不存在则添加到树干上，然后向内核注册回调函数，用于当中断事件来临时向准备就绪链表中插入数据；
+
+执行epoll_wait()时立刻返回准备就绪链表里的数据即可
+
+<img src="image/epoll-2.jpg" width=500>
 
 
+**触发模式**
 
+epoll 有 EPOLLLT 和 EPOLLET 两种触发模式，LT是默认的模式，ET是“高速”模式。
+
+LT（水平触发）模式下，只要这个文件描述符还有数据可读，每次 epoll_wait都会返回它的事件，提醒用户程序去操作；
+
+ET（边缘触发）模式下，在它检测到有 I/O 事件时，通过 epoll_wait 调用会得到有事件通知的文件描述符，对于每一个被通知的文件描述符，
+如可读，则必须将该文件描述符一直读到空，让 errno 返回 EAGAIN 为止，否则下次的 epoll_wait 不会返回余下的数据，会丢掉事件。如果ET模式不是非阻塞的，那这个一直读或一直写势必会在最后一次阻塞。
+
+<img src="image/epoll-3.jpg" width=500>
+
+ET模式（边缘触发）只有数据到来才触发，不管缓存区中是否还有数据，缓冲区剩余未读尽的数据不会导致epoll_wait返回；
+
+LT 模式（水平触发，默认）只要有数据都会触发，缓冲区剩余未读尽的数据会导致epoll_wait返回。
 
 
 
@@ -174,11 +237,12 @@ mmap
 
 [深入理解 Epoll](https://zhuanlan.zhihu.com/p/93609693)
 
-[源码剖析](https://github.com/Liu-YT/IO-Multiplexing)
+[I/O多路复用](https://github.com/Liu-YT/IO-Multiplexing)
 
 [IO多路复用select/poll/epoll介绍](https://www.bilibili.com/video/BV1qJ411w7du/?spm_id_from=333.788.videocard.2)
 
+[epoll源码重要部分详解](https://zhuanlan.zhihu.com/p/147549069)
 
-
+[epoll原理详解](https://zhuanlan.zhihu.com/p/165287735)
 
 
