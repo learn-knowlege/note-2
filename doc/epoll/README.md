@@ -211,7 +211,7 @@ epoll_ctl 在向 epoll 对象中添加、修改、删除事件时，从 rbr 红�
 
 执行epoll_wait()时立刻返回准备就绪链表里的数据即可
 
-<img src="image/epoll-2.jpg" width=500>
+<img src="image/epoll-2.png" width=500>
 
 
 **触发模式**
@@ -223,7 +223,7 @@ LT（水平触发）模式下，只要这个文件描述符还有数据可读，
 ET（边缘触发）模式下，在它检测到有 I/O 事件时，通过 epoll_wait 调用会得到有事件通知的文件描述符，对于每一个被通知的文件描述符，
 如可读，则必须将该文件描述符一直读到空，让 errno 返回 EAGAIN 为止，否则下次的 epoll_wait 不会返回余下的数据，会丢掉事件。如果ET模式不是非阻塞的，那这个一直读或一直写势必会在最后一次阻塞。
 
-<img src="image/epoll-3.jpg" width=500>
+<img src="image/epoll-3.png" width=500>
 
 ET模式（边缘触发）只有数据到来才触发，不管缓存区中是否还有数据，缓冲区剩余未读尽的数据不会导致epoll_wait返回；
 
