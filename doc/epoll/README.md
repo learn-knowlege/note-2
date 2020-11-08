@@ -448,14 +448,12 @@ LT 模式（水平触发，默认）只要有数据都会触发，缓冲区剩�
 **参考**
 
 
-[深入理解 Epoll](https://zhuanlan.zhihu.com/p/93609693)
+[深入理解 epoll](https://zhuanlan.zhihu.com/p/93609693)
 
-[I/O多路复用](https://github.com/Liu-YT/IO-Multiplexing)
+[I/O 多路复用源码](https://github.com/Liu-YT/IO-Multiplexing)
 
-[IO多路复用select/poll/epoll介绍](https://www.bilibili.com/video/BV1qJ411w7du/?spm_id_from=333.788.videocard.2)
+[epoll 源码详解](https://zhuanlan.zhihu.com/p/147549069)
 
-[epoll源码重要部分详解](https://zhuanlan.zhihu.com/p/147549069)
-
-[epoll原理详解](https://zhuanlan.zhihu.com/p/165287735)
+[epoll 原理详解](https://zhuanlan.zhihu.com/p/165287735)
 
 
