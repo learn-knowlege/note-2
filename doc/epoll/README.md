@@ -1,20 +1,21 @@
 # I/O 多路复用
 
-什么是多路复用？
+Q：什么是多路复用？
 
-> 一个进程监听多个文件描述符。在 Linux 中，一切皆文件。
+> 一个进程监听多个文件描述符。
 
 Linux 支持 I/O 多路复用的系统调用有 select、poll、epoll，这些调用都是内核级别的。但 select、poll、epoll 本质上都是同步I/O，
-先是 block 住等待就绪的 socket，再 block 住将数据从内核拷贝到用户内存空间。I/O 多路复用模型。
+先是 block 住等待就绪的 socket，再 block 住将数据从内核拷贝到用户内存空间。socket 是非阻塞的，进程由 select、poll、epoll 函数进行了阻塞。
 
-<img src="image/model.jpg" width=500>
+<img src="image/model.jpg" width=600>
 
-I/O 多路复用的技术 解决了 C10k 问题。
+Q：什么是 C10k 问题。
 
 > C10K 问题本质上是操作系统处理大并发请求的问题。对于 Web 时代的操作系统而言，对于客户端过来的大量的并发请求，
 > 需要创建相应的服务进程或线程。这些进程或线程多了，导致数据拷贝频繁（缓存 I/O、内核将数据拷贝到用户进程空间、阻塞），
 > 进程 / 线程上下文切换消耗大，从而导致资源被耗尽而崩溃。这就是 C10K 问题的本质。
 
+I/O 多路复用就是用来解决 C10k 的问题。
 
 ## select
 
@@ -25,12 +26,8 @@ select 是用于 I/O 多路转接的一个系统调用函数。
 ```
 int select(int nfds, fd_set* readfds, fd_set* writefds, fd_set* errorfds, struct timeval* timeout);
 ```
-
-> nfds：sets的文件描述符的最大值;
->
-> readfds、writefds、writefd、serrorfds：fd_set类型，分别是可读、可写、出错描述符
->
-> timeout：表示等待检查完成的最长时间
+nfds：sets的文件描述符的最大值;readfds、writefds、writefd、serrorfds：fd_set类型，分别是可读、可写、出错描述符；
+timeout：表示等待检查完成的最长时间
 
 为了维护 fd_set 类型的参数，会使用下面四个宏：FD_SET(), FD_CLR(), FD_ZERO() 和 FD_ISSET()。
 
@@ -123,8 +120,8 @@ while(1) {
 }
 ```
 
-client_fdset 是 bitmap 类型，用于标记要监听的 client_sockfd，默认是 1024 大小，只能标记 1024 个 fd(文件描述符)。
-每次循环，都需要重置 client_fdset。
+client_fdset 是 bitmap 数据类型，用于标记要监听的 client_sockfd，默认是 1024 大小，限制标记 1024 个 fd(文件描述符)。
+且每次循环时，都需要重置 client_fdset。
 
 当有消息或超时时，select 不再阻塞，client_fdset 会把有消息的文件描述符对应的 bit 置为 1。此时需要把 fd 
 集合从用户态拷贝到内核态，开销在 fd 很多时会很大。
