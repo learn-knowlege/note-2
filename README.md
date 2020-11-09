@@ -9,7 +9,7 @@
 
 #### [TCP/IP协议](doc/tcp-ip)
 
-#### [垃圾回收](doc/garbagecollection)
+#### [垃圾回收](doc/gc)
 
 #### [Docker](doc/docker)
 
@@ -19,5 +19,5 @@
 
 #### [I/O 多路复用](doc/epoll)
 
-#### [CPU 上下文切换](doc/context-switch)
+#### [CPU 上下文切换](doc/cswitch)
 
