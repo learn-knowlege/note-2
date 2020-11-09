@@ -13,7 +13,7 @@ CPU 都需要知道任务从哪里加载、又从哪里开始运行，也就是�
 `CPU 寄存器`，是 CPU 内置的容量小、但速度极快的内存。而`程序计数器`，则是用来存储 CPU 正在执行的指令位置、或者即将执行的下一条指令位置。
 它们都是 CPU 在运行任何任务前，必须的依赖环境，因此也被叫做 `CPU 上下文`。
 
-<img src="image/switch.png" width=500>
+<img src="image/switch.png" width=450>
 
 **上下文切换**
 
@@ -36,7 +36,7 @@ CPU 的上下文切换的场景
 
 Linux 按照特权等级，把进程的运行空间分为内核空间和用户空间，分别对应着下图中， CPU 特权等级的 Ring 0 和 Ring 3。
 
-<img src="image/core.png" width=500>
+<img src="image/core.png" width=300>
 
 > 内核空间（Ring 0）具有最高权限，可以直接访问所有资源；
 >
