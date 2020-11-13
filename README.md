@@ -9,7 +9,7 @@
 
 #### [TCP/IP协议](doc/tcp-ip)
 
-#### [垃圾回收](doc/gc)
+#### [Go 垃圾回收](doc/gc)
 
 #### [Docker](doc/docker)
 
