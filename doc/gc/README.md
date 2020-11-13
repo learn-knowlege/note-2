@@ -143,8 +143,7 @@ writePointer(slot, ptr):
 >
 > Yuasa的删除写屏障则需要在GC开始时STW扫描堆栈来记录初始快照，这个过程会保护开始时刻的所有存活对象，但结束时无需STW。
 
-Go1.8版本引入的混合写屏障结合了Yuasa的删除写屏障和Dijkstra的插入写屏障，结合了两者的优点，避免了对栈 re-scan 的过程，
-极大的减少了STW的时间。
+混合写屏障：
 
 ```cgo
 writePointer(slot, ptr):
@@ -154,7 +153,7 @@ writePointer(slot, ptr):
     *slot = ptr
 ```
 
-规则：
+具体操作：
 
 > GC开始将栈上的对象全部扫描并标记为黑色(之后不再进行第二次重复扫描，无需STW);
 >
