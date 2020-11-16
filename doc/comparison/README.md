@@ -125,7 +125,6 @@ func main() {
 
 map 中的 key 值必须为可比较类型。结构体 struct 想作为 map 中的 key 值，不能包含不可比较成员。
 
-
 **参考**
 
 [可比较对象](https://golang.org/ref/spec#Comparison_operators)
