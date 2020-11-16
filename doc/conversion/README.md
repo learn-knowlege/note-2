@@ -162,3 +162,8 @@ func main() {
     fmt.Println(*c)
 }
 ```
+
+### 参考
+
+https://golang.org/ref/spec#Conversions
+
