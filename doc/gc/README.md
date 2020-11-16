@@ -179,6 +179,7 @@ Golang 中的混合写屏障满足弱三色不变式，结合了删除写屏障�
 V1.8-三色标记法，混合写屏障机制， 栈空间不启动，堆空间启动。整个过程几乎不需要 STW，sub ms单位。
 
 
+
 **参考**
 
 [Go修养之路](https://www.kancloud.cn/aceld/golang/1958308#Go_V18hybrid_write_barrier_310)
