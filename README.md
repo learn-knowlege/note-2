@@ -17,6 +17,8 @@
 
 #### [CPU 上下文切换](doc/cswitch)
 
+#### [MySQL 索引](doc/InnoDB)
+
 #### [Go 垃圾回收](doc/gc)
 
 #### [Go Runtime](doc/runtime)
