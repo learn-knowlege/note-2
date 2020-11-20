@@ -31,16 +31,18 @@ Centos 支持版本7.0及更高版本。
 设置稳定源:
 
 > 阿里云
+> 
 > yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
 > 清华大学
+> 
 > yum-config-manager --add-repo  https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/docker-ce.repo
 
-#### 安装(最新版)
+#### 默认
 
 > yum install docker-ce docker-ce-cli containerd.io
 
-Docker 安装完默认未启动。并且已经创建好 docker 用户组，但该用户组下没有用户。
+默认安装最新版 Dcoker，安装完成后创建好 docker 用户组，但该用户组下没有用户。需要手动启动。
 
 #### 指定版本
 
