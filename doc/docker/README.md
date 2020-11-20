@@ -11,46 +11,36 @@ Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级�
 Docker 从 17.03 版本之后分为 CE（Community Edition: 社区版） 和 EE（Enterprise Edition: 企业版），我们用社区版就可以了。
 
 
-### centos 安装
+### 安装
 
-**支持版本**
+Centos 支持版本7.0及更高版本。
 
-> CentOS 7
->
-> CentOS 8
->
-> 更高版本...
-
-**卸载旧版**
+卸载旧版
 
 > yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate 
 > docker-logrotate docker-engine
 
-**设置仓库**
+设置仓库，安装所需的软件包。
 
-安装所需的软件包。yum-utils 提供了 yum-config-manager ，并且 device mapper 存储驱动程序需要 device-mapper-persistent-data 和 lvm2。
+yum-utils 提供了 yum-config-manager ，并且 device mapper 存储驱动程序需要 device-mapper-persistent-data 和 lvm2。
 
 > yum install -y yum-utils device-mapper-persistent-data lvm2
 
-**设置稳定源**
+设置稳定yum源
 
-阿里云
-
+> 阿里云
 > yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
-清华大学
-
+> 清华大学
 > yum-config-manager --add-repo  https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/docker-ce.repo
 
-**安装 Docker Engine-Community**
-
-安装最新版本的 Docker Engine-Community 和 containerd，或者转到下一步安装特定版本：
+安装 Docker Engine-Community，默认最新版本。
 
 > yum install docker-ce docker-ce-cli containerd.io
 
 Docker 安装完默认未启动。并且已经创建好 docker 用户组，但该用户组下没有用户。
 
-**指定版本安装**
+指定版本安装
 
 1、列出并排序您存储库中可用的版本。此示例按版本号（从高到低）对结果进行排序。
 
@@ -65,7 +55,7 @@ Docker 安装完默认未启动。并且已经创建好 docker 用户组，但�
 
 > yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io
 
-**启动、关闭**
+启动、关闭
 
 > systemctl start docker \
 > systemctl stop docker
