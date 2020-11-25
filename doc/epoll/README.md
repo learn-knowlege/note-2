@@ -428,6 +428,12 @@ epoll_ctl 在向 epoll 对象中添加、修改、删除事件时，从 rbr 红�
 <img src="image/epoll-2.png" width=500>
 
 
+epoll_wait在调用时，在给定的timeout时间内，当在监控的所有句柄中有事件发生时，就返回用户态的进程。
+
+从调用方式就可以看到epoll相比select/poll的优越之处是,因为后者每次调用时都要传递你所要监控的所有socket给select/poll系统调用，这意味着需要将用户态的socket列表copy到内核态，如果以万计的句柄会导致每次都要copy几十几百KB的内存到内核态，非常低效。而我们调用epoll_wait时就相当于以往调用select/poll，但是这时却不用传递socket句柄给内核，因为内核已经在epoll_ctl中拿到了要监控的句柄列表。
+
+所以，实际上在你调用epoll_create后，内核就已经在内核态开始准备帮你存储要监控的句柄了，每次调用epoll_ctl只是在往内核的数据结构里塞入新的socket句柄。
+
 **触发模式**
 
 epoll 有 EPOLLLT 和 EPOLLET 两种触发模式，LT是默认的模式，ET是“高速”模式。
