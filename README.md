@@ -3,7 +3,7 @@
 
 #### [搜索引擎](doc/searchengine)
 
-#### [限流(滑动窗口、漏桶、令牌桶)](doc/ratelimit)
+#### [限流算法](doc/ratelimit)
 
 #### [以太网帧](doc/frame)
 
